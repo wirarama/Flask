@@ -1,0 +1,18 @@
+{% extends "mqtt.html" %}
+{% block title %}Visual{% endblock %}
+{% block content %}
+{% if posted %}
+  <div class="alert alert-{{ posted[0] }}" role="alert">
+  {{ posted[1] }}
+      </div>
+  {% endif %}
+<form method ="POST" action="/relay">
+    {% for x in relay %}
+      <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" name="relay" value="{{ x[0] }}" {{ x[1] }}>
+          <label class="form-check-label" for="flexSwitchCheckDefault">Relay {{ x[0] }}</label>
+        </div>
+    {% endfor %}
+    <button class="btn btn-outline-success" type="submit">Publish</button>
+</form>
+{% endblock %}
