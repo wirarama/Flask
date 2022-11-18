@@ -27,25 +27,37 @@ def handle_mqtt_message(client, userdata, message):
         f = open("mqtttest.csv","a")
         f.write(message.payload.decode()+"\n")
         f.close()
-
+        
 @app.route('/relay', methods=['GET', 'POST'])
 def relay():
     posted = None
-    relay = [i+1 for i in range(4)]
+    relay = [str(i+1) for i in range(4)]
+    f = open("relay.log","r")
+    mr = f.read()
+    f.close()
     cr = []
-    mr = ""
+    for i in mr:
+        if i == "1":
+            cr.append("checked")
+        else:
+            cr.append("")
     if request.method == 'POST':
-        test = request.form.getlist('relay')
+        relaydata = request.form.getlist('relay')
+        mr = ""
+        cr = []
         for i in relay:
-            if str(i) in test:
+            if i in relaydata:
                 mr+="1"
                 cr.append("checked")
             else:
                 mr+="0"
                 cr.append("")
+        f = open("relay.log","w")
+        f.write(mr)
+        f.close()
         mqtt.publish('relay',mr)
-        relay = list(zip(relay,cr))
-        posted = ["success",str(relay)]
+        posted = ["success","Relay sudah diupdate"]
+    relay = list(zip(relay,cr))
     return render_template('relay.html',posted=posted,relay=relay)
         
 @app.route('/visual')
